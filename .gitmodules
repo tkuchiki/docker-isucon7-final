@@ -1,0 +1,4 @@
+[submodule "isucon7-final"]
+	path = isucon7-final
+	url = https://github.com/isucon/isucon7-final
+    ignore = dirty

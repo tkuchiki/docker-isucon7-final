@@ -1,0 +1,17 @@
+FROM golang:1.9.2
+
+RUN useradd -d /home/isucon -m isucon
+
+USER isucon
+ENV GOPATH=${HOME}/go
+WORKDIR /home/isucon
+RUN mkdir ${HOME}/go
+RUN go get -u github.com/golang/dep/cmd/dep
+RUN git clone https://github.com/isucon/isucon7-final
+RUN cp -a ${HOME}/isucon7-final/webapp/go/src/app ${GOPATH}/src/
+WORKDIR ${GOPATH}/src/app
+RUN dep ensure && go build
+
+EXPOSE 5000
+
+ENTRYPOINT ["./app"]

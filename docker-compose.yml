@@ -1,0 +1,53 @@
+version: '3'
+services:
+  bench:
+    build:
+      dockerfile: ./Dockerfile.bench
+      context: .
+    image: isucon7-final-bench
+    depends_on:
+       - web
+       - goapp
+  web:
+    build:
+      dockerfile: ./Dockerfile.nginx
+      context: .
+    image: isucon7-final-web
+    depends_on:
+      - goapp
+    ports:
+      - "8080:80"
+    volumes:
+      - ./isucon7-final/files/cco.nginx.conf:/etc/nginx/conf.d/cco.nginx.conf
+    environment:
+      NGINX_PORT: 80
+  goapp:
+    build:
+      dockerfile: ./Dockerfile.golang
+      context: .
+    image: isucon7-final-goapp
+    depends_on:
+       - db
+    ports:
+      - "5000"
+    environment:
+      ISU_DB_PORT: "3306"
+      ISU_DB_USER: "isucon"
+      ISU_DB_PASSWORD: "isucon"
+      ISU_DB_HOST: "db"
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306"
+    volumes:
+      - ./isucon7-final/db/isudb.sql:/docker-entrypoint-initdb.d/1_isudb.sql
+      - ./isucon7-final/db/m_item.sql:/docker-entrypoint-initdb.d/2_m_item.sql
+      - dbdata:/var/lib/mysql
+    command: ["--character-set-server=utf8mb4"]
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: isudb
+      MYSQL_USER: isucon
+      MYSQL_PASSWORD: isucon
+volumes:
+  dbdata:
