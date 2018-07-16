@@ -42,6 +42,7 @@ services:
     volumes:
       - ./isucon7-final/db/isudb.sql:/docker-entrypoint-initdb.d/1_isudb.sql
       - ./isucon7-final/db/m_item.sql:/docker-entrypoint-initdb.d/2_m_item.sql
+      - ./mysql/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf
       - dbdata:/var/lib/mysql
     command: ["--character-set-server=utf8mb4"]
     environment:
