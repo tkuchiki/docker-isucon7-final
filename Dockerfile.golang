@@ -1,15 +1,16 @@
 FROM golang:1.9.2
 
 RUN useradd -d /home/isucon -m isucon
+RUN mkdir -p /home/isucon/go/src
+COPY isucon7-final/webapp/go/src/app /home/isucon/go/src/app
+RUN chown -R isucon: /home/isucon/go
 
 USER isucon
-ENV GOPATH=${HOME}/go
+ENV GOPATH=/home/isucon/go PATH=/home/isucon/go/bin:$PATH
 WORKDIR /home/isucon
-RUN mkdir ${HOME}/go
 RUN go get -u github.com/golang/dep/cmd/dep
-RUN git clone https://github.com/isucon/isucon7-final
-RUN cp -a ${HOME}/isucon7-final/webapp/go/src/app ${GOPATH}/src/
-WORKDIR ${GOPATH}/src/app
+
+WORKDIR /home/isucon/go/src/app
 RUN dep ensure && go build
 
 EXPOSE 5000
